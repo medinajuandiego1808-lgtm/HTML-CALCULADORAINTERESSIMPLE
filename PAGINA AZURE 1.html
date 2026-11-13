@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Interés Simple</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .contenedor {
+            background-color: white;
+            padding: 25px;
+            max-width: 350px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 8px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #resultado {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="contenedor">
+        <h2>Interés Simple</h2>
+
+        <p>Ingresa los siguientes datos:</p>
+
+        <input type="number" id="capital" placeholder="Capital inicial">
+
+        <input type="number" id="tasa" placeholder="Tasa de interés (%)">
+
+        <input type="number" id="tiempo" placeholder="Tiempo (años)">
+
+        <br><br>
+
+        <button onclick="calcular()">Calcular interés</button>
+
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        function calcular() {
+
+            let capital = parseFloat(document.getElementById("capital").value);
+            let tasa = parseFloat(document.getElementById("tasa").value);
+            let tiempo = parseFloat(document.getElementById("tiempo").value);
+
+            if (isNaN(capital) || isNaN(tasa) || isNaN(tiempo) ||
+                capital <= 0 || tasa < 0 || tiempo <= 0) {
+                document.getElementById("resultado").innerHTML =
+                    "Por favor, ingresa valores válidos.";
+                return;
+            }
+
+            let interes = capital * (tasa / 100) * tiempo;
+            let total = capital + interes;
+
+            document.getElementById("resultado").innerHTML =
+                "Interés generado: $" + interes.toFixed(2) +
+                "<br> Monto total: $" + total.toFixed(2);
+        }
+    </script>
+
+</body>
+</html>
