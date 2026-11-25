@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Interés Simple</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: grid; place-items: center;
+      padding: 24px; font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #e8f1ff, #f5f7fb); color: #182338;
+    }
+    .card {
+      width: min(100%, 520px); background: white; padding: 32px;
+      border-radius: 18px; box-shadow: 0 12px 36px rgba(20, 50, 90, .12);
+    }
+    h1 { margin: 0 0 8px; color: #1456a0; font-size: 28px; }
+    .intro { color: #5c6878; line-height: 1.5; margin: 0 0 24px; }
+    label { display: block; margin: 16px 0 7px; font-weight: 700; }
+    input, select {
+      width: 100%; padding: 12px 13px; border: 1px solid #cbd5e1;
+      border-radius: 9px; font-size: 16px; background: #fff;
+    }
+    input:focus, select:focus { outline: 2px solid #8bbcff; border-color: #2673c9; }
+    button {
+      width: 100%; margin-top: 22px; padding: 14px; border: 0;
+      border-radius: 9px; background: #1769aa; color: white;
+      font-size: 16px; font-weight: 700; cursor: pointer;
+    }
+    button:hover { background: #10558e; }
+    .result {
+      display: none; margin-top: 22px; padding: 18px;
+      border-radius: 10px; background: #edf7f0; border: 1px solid #b9dfc3;
+    }
+    .result p { margin: 8px 0; }
+    .amount { font-size: 23px; font-weight: 700; color: #176b35; }
+    .formula { margin-top: 20px; padding: 13px; background: #f3f6fa;
+      border-radius: 9px; color: #48566a; font-size: 14px; }
+    .error { display: none; margin-top: 12px; color: #b42318; }
+    footer { margin-top: 22px; text-align: center; color: #8290a2; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Calculadora de Interés Simple</h1>
+    <p class="intro">Ingresa los datos de la operación para calcular el interés generado y el monto total.</p>
+
+    <form id="interestForm">
+      <label for="capital">Capital inicial ($)</label>
+      <input id="capital" type="number" min="0.01" step="0.01" placeholder="Ej. 1000000" required>
+
+      <label for="rate">Tasa de interés (%)</label>
+      <input id="rate" type="number" min="0" step="0.01" placeholder="Ej. 5" required>
+
+      <label for="time">Tiempo</label>
+      <input id="time" type="number" min="0.01" step="0.01" placeholder="Ej. 6" required>
+
+      <label for="period">Período de la tasa</label>
+      <select id="period">
+        <option value="días">Diaria (tiempo en días)</option>
+        <option value="meses" selected>Mensual (tiempo en meses)</option>
+        <option value="años">Anual (tiempo en años)</option>
+      </select>
+
+      <button type="submit">Calcular interés</button>
+      <p class="error" id="error" role="alert"></p>
+    </form>
+
+    <section class="result" id="result" aria-live="polite">
+      <p>Interés generado:</p>
+      <div class="amount" id="interest">$0</div>
+      <p>Monto total (capital + interés): <strong id="total">$0</strong></p>
+    </section>
+
+    <div class="formula">
+      <strong>Fórmula:</strong> I = C × i × t<br>
+      La tasa y el tiempo deben corresponder al mismo período.
+    </div>
+    <footer>Proyecto académico · HTML, CSS y JavaScript</footer>
+  </main>
+
+  <script>
+    const form = document.getElementById('interestForm');
+    const money = value => new Intl.NumberFormat('es-CO', {
+      style: 'currency', currency: 'COP', maximumFractionDigits: 2
+    }).format(value);
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const capital = Number(document.getElementById('capital').value);
+      const rate = Number(document.getElementById('rate').value);
+      const time = Number(document.getElementById('time').value);
+      const error = document.getElementById('error');
+      const result = document.getElementById('result');
+
+      if (!Number.isFinite(capital) || !Number.isFinite(rate) ||
+          !Number.isFinite(time) || capital <= 0 || rate < 0 || time <= 0) {
+        error.textContent = 'Verifica los datos: el capital y el tiempo deben ser mayores que cero y la tasa no puede ser negativa.';
+        error.style.display = 'block';
+        result.style.display = 'none';
+        return;
+      }
+
+      error.style.display = 'none';
+      const interest = capital * (rate / 100) * time;
+      document.getElementById('interest').textContent = money(interest);
+      document.getElementById('total').textContent = money(capital + interest);
+      result.style.display = 'block';
+    });
+  </script>
+</body>
+</html>
