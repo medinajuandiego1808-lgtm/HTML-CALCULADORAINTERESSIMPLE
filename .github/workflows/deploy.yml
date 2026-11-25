@@ -1,0 +1,60 @@
+
+name: Publicar calculadora en Azure
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'calculadora_interes_simple.html'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar biblioteca de Azure
+        run: pip install azure-storage-blob
+
+      - name: Publicar archivo en Azure
+        env:
+          AZURE_STORAGE_ACCOUNT_KEY: ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }}
+        run: |
+          python - <<'PY'
+          import os
+          from azure.storage.blob import BlobServiceClient, ContentSettings
+
+          account = "culadorainteressimple003"
+          key = os.environ["AZURE_STORAGE_ACCOUNT_KEY"]
+
+          service = BlobServiceClient(
+              account_url=f"https://{account}.blob.core.windows.net",
+              credential=key
+          )
+
+          blob = service.get_blob_client(
+              container="$web",
+              blob="calculadora_interes_simple.html"
+          )
+
+          with open("calculadora_interes_simple.html", "rb") as file:
+              blob.upload_blob(
+                  file,
+                  overwrite=True,
+                  content_settings=ContentSettings(
+                      content_type="text/html; charset=utf-8"
+                  )
+              )
+
+          print("¡Calculadora publicada correctamente!")
+          PY
